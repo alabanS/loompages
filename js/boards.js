@@ -177,7 +177,7 @@ const Boards = {
         list.innerHTML = '';
 
         this._data.boards.forEach(board => {
-            const count = this.getTaskCount(board.id);
+            //const count = this.getTaskCount(board.id);
             const isActive = board.id === this._currentBoardId;
             const chip = document.createElement('div');
             chip.className = `board-chip${isActive ? ' active' : ''}`;
@@ -191,7 +191,6 @@ const Boards = {
                     <span class="board-chip-name">${this._escape(board.name)}</span>
                     ${range ? `<span class="board-chip-dates">${range}</span>` : ''}
                 </span>
-                <span class="board-chip-count">${count}</span>
                 <span class="board-chip-actions">
                     <button class="board-edit-btn" data-id="${board.id}" title="Редактировать">✏️</button>
                     <button class="board-delete-btn" data-id="${board.id}" title="Удалить">✕</button>
