@@ -6,8 +6,8 @@
 }
 
 :root {
-    --bg-gradient-start: #eef2ff;
-    --bg-gradient-end: #f8fafc;
+    --bg-gradient-start: #667eea;
+    --bg-gradient-end: #667eea;
     --container-bg: rgba(255, 255, 255, 0.92);
     --text-primary: #0f172a;
     --text-secondary: #475569;
@@ -743,17 +743,16 @@ body.dark-theme .menu-toggle:hover {
 
 .stat-item {
     background: var(--card-bg);
-    padding: 10px 18px;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
+    padding: 4px 10px 4px 8px; /* Небольшие отступы */
+    border-radius: 999px; /* Делает форму овальной/круглой */
+    border: none; /* Убрали рамку */
     display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 90px;
+    align-items: center;
+    gap: 4px;
 }
 
 .stat-label {
-    font-size: 0.72em;
+    font-size: 0.60em;
     font-weight: 500;
     color: var(--text-muted);
     text-transform: uppercase;
@@ -761,9 +760,12 @@ body.dark-theme .menu-toggle:hover {
 }
 
 .stat-item span:last-child {
-    color: var(--text-primary);
+     color: var(--text-primary);
     font-weight: 700;
-    font-size: 1.25em;
+    font-size: 0.9em;
+    background: var(--card-bg); /* Цифра на белом фоне внутри бейджика */
+    padding: 0 4px;
+    border-radius: 4px;
 }
 
 /* ========== ПОИСК И ФИЛЬТРЫ (Канбан) ========== */
