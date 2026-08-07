@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loompage</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="images/logo.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
+
+    <!-- Шрифт -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="app-container" id="app">
+
+        <!-- ШАПКА -->
+        <header class="header">
+            <div class="title-section">
+                <h1 class="logo">
+                    <img src="images/logo.png" alt="Loompage" class="logo-img">
+                </h1>
+                <span class="date-badge" id="currentDate"></span>
+            </div>
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" title="Сменить тему">🌓</button>
+                <button class="add-btn" id="addTaskBtn" title="Добавить задачу">+</button>
+                <!-- Кнопка меню (троеточие) -->
+                <button class="menu-toggle" id="menuToggle" title="Дополнительные действия">⋮</button>
+    
+                <!-- Выпадающее меню -->
+                <div class="dropdown-menu" id="dropdownMenu">        
+                    <!-- Кнопка экспорта -->
+                    <button class="dropdown-item" id="exportDataBtn" title="Скачать бэкап данных">
+                        💾 <span class="dropdown-label">Скачать бэкап</span>
+                    </button>
+                    
+                    <!-- Кнопка импорта -->
+                    <button class="dropdown-item" id="importDataBtn" title="Загрузить бэкап данных">
+                        📂 <span class="dropdown-label">Загрузить бэкап</span>
+                    </button>
+                     <!-- Кнопка отзыва -->
+                    <button class="dropdown-item" id="feedbackBtn">
+                        💬 <span class="dropdown-label">Оставить отзыв</span>
+                    </button>
+                    <!-- Кнопка донатов (сердечко) -->
+                    <a href="https://pay.cloudtips.ru/p/98b1cdd9?fbclid=PAVERFWAS7HbRwZG9mAmV4dG4DYWVtAjExAHNydGMGYXBwX2lkDzEyNDAyNDU3NDI4NzQxNAABp2EPMPa0duYFCTZpXGOzaQQTQgIq_0t-M8G2RDHNiiF6snDWyB6r-ef7Pu_q_aem_Q-0noYHqa1kdM_B-ekjvrQ" target="_blank" class="dropdown-item donate-btn" title="Поддержать проект">
+                        <span class="heart-default">🤍</span>
+                        <span class="heart-hover">❤️</span>
+                        <span class="dropdown-label donate-label">Поддержать проект</span>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- НАВИГАЦИЯ -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-page="kanban">📋 Канбан</button>
+            <button class="nav-tab" data-page="links">🔗 Ссылки</button>
+            <button class="nav-tab" data-page="notes">📝 Заметки</button>
+        </div>
+
+        <!-- ===================== СТРАНИЦА КАНБАН ===================== -->
+        <div class="page active" id="pageKanban">
+            <!-- СПРИНТ-ДОСКИ -->
+            <div class="boards-section" id="boardsSection">
+                <div class="boards-header">
+                    <div class="boards-title-group">
+                        <button type="button" class="boards-toggle-btn" id="boardsToggleBtn" title="Свернуть/развернуть спринты" aria-expanded="true">▼</button>
+                        <div>
+                            <h2 class="boards-heading">Спринты</h2>
+                            <div class="current-board-meta">
+                                <span id="currentBoardTitle">Бэклог</span>
+                                <span id="currentBoardDates" class="board-dates-label"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-new-board" id="addBoardBtn" title="Новый спринт">
+                        <span>+</span> Новый спринт
+                    </button>
+                </div>
+                <div class="boards-body" id="boardsBody">
+                    <div class="boards-scroll">
+                        <div class="boards-list" id="boardsList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- СТАТИСТИКА -->
+            <div class="stats-bar">
+                <div class="stat-item"><span class="stat-label">Всего</span><span id="totalTasks">0</span></div>
+                <div class="stat-item"><span class="stat-label">В работе</span><span id="progressTasks">0</span></div>
+                <div class="stat-item"><span class="stat-label">Готово</span><span id="doneTasks">0</span></div>
+                <div class="stat-item"><span class="stat-label">Архив</span><span id="archiveTasks">0</span></div>
+            </div>
+
+            <!-- ПОИСК И ФИЛЬТРЫ -->
+            <div class="search-section">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Поиск задач..." />
+                </div>
+                <div class="filter-group">
+                    <button class="filter-btn active" data-filter="all">Все</button>
+                    <button class="filter-btn" data-filter="todo">To Do</button>
+                    <button class="filter-btn" data-filter="progress">В работе</button>
+                    <button class="filter-btn" data-filter="review">На проверке</button>
+                    <button class="filter-btn" data-filter="done">Готово</button>
+                    <button class="filter-btn" data-filter="archive">Архив</button>
+                </div>
+            </div>
+
+            <!-- КАНБАН ДОСКА -->
+            <div class="kanban-board" id="kanbanBoard">
+                <!-- Колонки генерируются JS -->
+            </div>
+        </div>
+
+        <!-- ===================== СТРАНИЦА ССЫЛОК ===================== -->
+        <div class="page" id="pageLinks">
+            <div class="links-page">
+                <div class="links-sidebar" id="linksSidebar">
+                    <div class="sidebar-header">
+                        <h3>📂 Категории</h3>
+                        <button id="addCategoryBtn">+</button>
+                    </div>
+                    <ul class="tree" id="categoryTree">
+                        <!-- Генерируется JS -->
+                    </ul>
+                </div>
+                <div class="links-content" id="linksContent">
+                    <div class="links-header">
+                        <h3 id="currentCategoryTitle">📁 Все ссылки</h3>
+                        <div class="actions">
+                            <button class="btn-add-link" id="addLinkBtn">➕ Добавить ссылку</button>
+                        </div>
+                    </div>
+                    <div id="linksList">
+                        <!-- Список ссылок генерируется JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== СТРАНИЦА ЗАМЕТОК ===================== -->
+        <div class="page" id="pageNotes">
+            <div class="notes-page">
+                <div class="notes-header">
+                    <h2>📝 Мои заметки</h2>
+                    <div class="actions">
+                        <button class="btn-add-note" id="addNoteBtn">➕ Добавить заметку</button>
+                    </div>
+                </div>
+                <div class="notes-grid" id="notesGrid">
+                    <!-- Заметки генерируются JS -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===================== ФОРМА СПРИНТ-ДОСКИ ===================== -->
+    <div class="modal-overlay" id="boardFormOverlay">
+        <div class="modal-content">
+            <h2 id="boardFormTitle">🏃 Новый спринт</h2>
+            <form id="boardForm" autocomplete="off">
+                <div class="form-group">
+                    <label>Название спринта *</label>
+                    <input type="text" id="boardName" placeholder="Спринт 1, Q3 Release..." required />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Дата начала</label>
+                        <input type="date" id="boardStartDate" />
+                    </div>
+                    <div class="form-group">
+                        <label>Дата окончания</label>
+                        <input type="date" id="boardEndDate" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Цвет</label>
+                    <div class="color-picker" id="boardColorPicker"></div>
+                </div>
+                <input type="hidden" id="editBoardId" value="" />
+                <div class="form-actions">
+                    <button type="submit" class="btn-save" id="boardFormSubmit">Создать</button>
+                    <button type="button" class="btn-cancel" id="boardFormCancel">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================== ФОРМА ЗАДАЧИ ===================== -->
+    <div class="modal-overlay" id="taskFormOverlay">
+        <div class="modal-content">
+            <h2 id="taskFormTitle">➕ Новая задача</h2>
+            <form id="taskForm" autocomplete="off">
+                <div class="form-group">
+                    <label>Название *</label>
+                    <input type="text" id="taskTitle" placeholder="Что нужно сделать?" required />
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="taskDesc" placeholder="Подробности..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Ссылка</label>
+                    <input type="url" id="taskLink" placeholder="https://example.com" />
+                    <span class="hint">🔗 Ссылка будет отображаться в карточке</span>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Дедлайн</label>
+                        <input type="datetime-local" id="taskDeadline" />
+                    </div>
+                    <div class="form-group">
+                        <label>Категория</label>
+                        <select id="taskCategory">
+                            <option value="work">💼 Работа</option>
+                            <option value="personal">🏠 Личное</option>
+                            <option value="study">📚 Учеба</option>
+                            <option value="health">❤️ Здоровье</option>
+                            <option value="other">📌 Другое</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Приоритет</label>
+                    <div class="priority-selector" id="prioritySelector">
+                        <div class="priority-opt" data-priority="high">🔴 Высокий</div>
+                        <div class="priority-opt selected" data-priority="medium">🟡 Средний</div>
+                        <div class="priority-opt" data-priority="low">🟢 Низкий</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Цвет карточки</label>
+                    <div class="color-picker" id="taskColorPicker"></div>
+                    <span class="hint">Необязательно — для выделения задачи</span>
+                </div>
+                <input type="hidden" id="editTaskId" value="" />
+                <div class="form-actions">
+                    <button type="submit" class="btn-save" id="taskFormSubmit">Добавить</button>
+                    <button type="button" class="btn-cancel" id="taskFormCancel">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================== ФОРМА КАТЕГОРИИ ===================== -->
+    <div class="modal-overlay" id="categoryFormOverlay">
+        <div class="modal-content">
+            <h2 id="categoryFormTitle">📁 Новая категория</h2>
+            <form id="categoryForm" autocomplete="off">
+                <div class="form-group">
+                    <label>Название категории *</label>
+                    <input type="text" id="categoryName" placeholder="Введите название..." required />
+                </div>
+                <div class="form-group">
+                    <label>Родительская категория</label>
+                    <select id="categoryParent">
+                        <option value="">— Корневая —</option>
+                    </select>
+                </div>
+                <input type="hidden" id="editCategoryId" value="" />
+                <div class="form-actions">
+                    <button type="submit" class="btn-save" id="categoryFormSubmit">Добавить</button>
+                    <button type="button" class="btn-cancel" id="categoryFormCancel">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================== ФОРМА ССЫЛКИ ===================== -->
+    <div class="modal-overlay" id="linkFormOverlay">
+        <div class="modal-content">
+            <h2 id="linkFormTitle">🔗 Новая ссылка</h2>
+            <form id="linkForm" autocomplete="off">
+                <div class="form-group">
+                    <label>Название *</label>
+                    <input type="text" id="linkTitle" placeholder="Название ссылки" required />
+                </div>
+                <div class="form-group">
+                    <label>URL *</label>
+                    <input type="url" id="linkUrl" placeholder="https://example.com" required />
+                    <span class="hint">Введите полный URL с https://</span>
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="linkDesc" placeholder="Краткое описание..."></textarea>
+                </div>
+                <input type="hidden" id="editLinkId" value="" />
+                <input type="hidden" id="linkCategoryId" value="" />
+                <div class="form-actions">
+                    <button type="submit" class="btn-save" id="linkFormSubmit">Добавить</button>
+                    <button type="button" class="btn-cancel" id="linkFormCancel">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================== ФОРМА ЗАМЕТКИ ===================== -->
+    <div class="modal-overlay" id="noteFormOverlay">
+        <div class="modal-content">
+            <h2 id="noteFormTitle">📝 Новая заметка</h2>
+            <form id="noteForm" autocomplete="off">
+                <div class="form-group">
+                    <label>Заголовок *</label>
+                    <input type="text" id="noteTitle" placeholder="О чём заметка?" required />
+                </div>
+                <div class="form-group">
+                    <label>Текст заметки</label>
+                    <textarea id="noteContent" placeholder="Что нужно запомнить?&#10;Например: что сказать на дейлике..." rows="6"></textarea>
+                    <span class="hint">💡 Используйте для записей, идей, планов на дейлики</span>
+                </div>
+                <input type="hidden" id="editNoteId" value="" />
+                <div class="form-actions">
+                    <button type="submit" class="btn-save" id="noteFormSubmit">Добавить</button>
+                    <button type="button" class="btn-cancel" id="noteFormCancel">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================== ФОРМА ОТЗЫВА ===================== -->
+    <div class="modal-overlay" id="feedbackFormOverlay">
+        <div class="modal-content" style="max-width: 500px;">
+            <h2>💬 Оставить отзыв</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9em;">
+                Ваше мнение поможет сделать Loompage лучше!
+            </p>
+            
+            <form id="feedbackForm" autocomplete="off">
+                <div class="form-group">
+                    <label>Ваше имя *</label>
+                    <input type="text" id="feedbackName" placeholder="Как вас зовут?" required />
+                </div>
+                
+                <div class="form-group">
+                    <label>Email (опционально)</label>
+                    <input type="email" id="feedbackEmail" placeholder="example@mail.ru" />
+                    <span class="hint">📧 Для обратной связи, если захотите</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>Ваш отзыв *</label>
+                    <textarea id="feedbackText" placeholder="Что вам нравится? Что можно улучшить?..." rows="4" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Рекомендация</label>
+                    <select id="feedbackRecommendation">
+                        <option value="recommend">🙂 Рекомендую</option>
+                        <option value="not_recommend">😐 Не рекомендую</option>
+                        <option value="neutral">🤔 Воздержусь от оценки</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Оценка</label>
+                    <div style="display: flex; gap: 8px; font-size: 28px; cursor: pointer; user-select: none;">
+                        <span class="rating-star" data-value="1">☆</span>
+                        <span class="rating-star" data-value="2">☆</span>
+                        <span class="rating-star" data-value="3">☆</span>
+                        <span class="rating-star" data-value="4">☆</span>
+                        <span class="rating-star" data-value="5">☆</span>
+                    </div>
+                    <input type="hidden" id="feedbackRating" value="0" />
+                    <span class="hint">⭐ Выберите оценку от 1 до 5</span>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-save" id="feedbackSubmit">Отправить отзыв ❤️</button>
+                    <button type="button" class="btn-cancel" id="feedbackCancel">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Скрытый input для загрузки файла -->
+    <input type="file" id="fileInput" accept=".json" style="display:none">
+    
+    <!-- УВЕДОМЛЕНИЯ -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- JavaScript модули -->
+    <script src="js/app.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/boards.js"></script>
+    <script src="js/tasks.js"></script>
+    <script src="js/links.js"></script>
+    <script src="js/notes.js"></script>
+    <script src="js/feedback.js"></script>
+    
+    <script>
+        // Открытие/закрытие меню
+        const menuToggle = document.getElementById('menuToggle');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        
+        menuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('active');
+        });
+        
+        // Закрытие при клике вне меню
+        document.addEventListener('click', function(e) {
+            if (!dropdownMenu.contains(e.target) && e.target !== menuToggle) {
+                dropdownMenu.classList.remove('active');
+            }
+        });
+        
+        // Закрытие при клике на пункт меню
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', function() {
+                dropdownMenu.classList.remove('active');
+            });
+        });
+        
+        // Сердечко (белое → красное при наведении)
+        const donateBtn = document.querySelector('.donate-btn');
+        if (donateBtn) {
+            donateBtn.addEventListener('mouseenter', function() {
+                this.querySelector('.heart-default').style.display = 'none';
+                this.querySelector('.heart-hover').style.display = 'inline-block';
+            });
+            
+            donateBtn.addEventListener('mouseleave', function() {
+                this.querySelector('.heart-default').style.display = 'inline-block';
+                this.querySelector('.heart-hover').style.display = 'none';
+            });
+        }
+    </script>
+</body>
+</html>
